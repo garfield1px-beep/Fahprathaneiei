@@ -14,19 +14,19 @@ local config = {
     useAimlock = true,
     useSilentAim = true,
     useEsp = true,
-    useTargetTracer = true,  -- เส้นลากไปหาเป้าหมาย
-    useRainbowFov = false,   -- FOV สีรุ้ง
-    useCrosshair = false,    -- เป้าเล็งกลางจอ (Custom Crosshair)
-    useTargetInfo = true,    -- หน้าต่างโชว์ข้อมูลเป้าหมาย
-    smoothness = 0.15,       -- ความพริ้วของกล้อง
+    useTargetTracer = true,
+    useRainbowFov = false,
+    useCrosshair = false,
+    useTargetInfo = true,
+    smoothness = 0.15,
     maxLockDistance = 300,
     maxEspDistance = 500,
     part = "Head",
     y_offset = -0.6,
     fov = 120,
     thick = 2,
-    idle_clr = Color3.fromRGB(235, 64, 52),
-    target_clr = Color3.fromRGB(50, 205, 50)
+    idle_clr = Color3.fromRGB(255, 75, 75),
+    target_clr = Color3.fromRGB(0, 230, 140)
 }
 
 local target = nil
@@ -38,13 +38,13 @@ local crosshairDot = Drawing.new("Circle")
 crosshairDot.Visible = false
 crosshairDot.Radius = 3.5
 crosshairDot.Filled = true
-crosshairDot.Color = Color3.fromRGB(0, 255, 200)
+crosshairDot.Color = Color3.fromRGB(0, 255, 220)
 
 -- Create Target Tracer Line
 local targetLine = Drawing.new("Line")
 targetLine.Visible = false
 targetLine.Thickness = 2
-targetLine.Color = Color3.fromRGB(0, 255, 150)
+targetLine.Color = Color3.fromRGB(0, 255, 180)
 
 -- Create Drawing FOV Circle
 local circle = Drawing.new("Circle")
@@ -55,10 +55,10 @@ circle.Thickness = config.thick
 circle.Color = config.idle_clr
 
 ---------------------------------------------------------
--- 🎨 CREATE MAIN GUI CONTAINER
+-- 🎨 MAIN GUI CONTAINER & STYLING
 ---------------------------------------------------------
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "FahprathanFinalUI"
+ScreenGui.Name = "FahprathanLuxuryUI"
 ScreenGui.ResetOnSpawn = false
 
 if syn and syn.protect_gui then
@@ -69,17 +69,17 @@ else
 end
 
 ---------------------------------------------------------
--- 🔴 FLOATING LOCK BUTTON
+-- 🔴 FLOATING LOCK BUTTON (CYBER STYLE)
 ---------------------------------------------------------
 local LockBtn = Instance.new("TextButton")
 LockBtn.Name = "FloatingLockBtn"
-LockBtn.Size = UDim2.new(0, 110, 0, 50)
+LockBtn.Size = UDim2.new(0, 115, 0, 52)
 LockBtn.Position = UDim2.new(0.8, 0, 0.4, 0)
-LockBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-LockBtn.Text = "LOCK"
-LockBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+LockBtn.BackgroundColor3 = Color3.fromRGB(20, 22, 30)
+LockBtn.Text = "⚡ LOCK"
+LockBtn.TextColor3 = Color3.fromRGB(0, 230, 255)
 LockBtn.Font = Enum.Font.GothamBold
-LockBtn.TextSize = 16
+LockBtn.TextSize = 15
 LockBtn.Active = true
 LockBtn.Draggable = true
 LockBtn.Parent = ScreenGui
@@ -87,30 +87,31 @@ LockBtn.Parent = ScreenGui
 Instance.new("UICorner", LockBtn).CornerRadius = UDim.new(0, 14)
 
 local LockStroke = Instance.new("UIStroke", LockBtn)
-LockStroke.Color = Color3.fromRGB(60, 120, 255)
-LockStroke.Thickness = 2.5
+LockStroke.Color = Color3.fromRGB(0, 170, 255)
+LockStroke.Thickness = 2
+LockStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
 ---------------------------------------------------------
--- 🩸 TARGET INFO DISPLAY CARD
+-- 🩸 TARGET INFO DISPLAY CARD (MODERN GLASS)
 ---------------------------------------------------------
 local TargetInfoFrame = Instance.new("Frame")
 TargetInfoFrame.Name = "TargetInfoFrame"
-TargetInfoFrame.Size = UDim2.new(0, 220, 0, 75)
-TargetInfoFrame.Position = UDim2.new(0.5, -110, 0.78, 0)
-TargetInfoFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 22)
+TargetInfoFrame.Size = UDim2.new(0, 230, 0, 80)
+TargetInfoFrame.Position = UDim2.new(0.5, -115, 0.78, 0)
+TargetInfoFrame.BackgroundColor3 = Color3.fromRGB(14, 16, 24)
 TargetInfoFrame.BorderSizePixel = 0
 TargetInfoFrame.Visible = false
 TargetInfoFrame.Parent = ScreenGui
 
-Instance.new("UICorner", TargetInfoFrame).CornerRadius = UDim.new(0, 10)
+Instance.new("UICorner", TargetInfoFrame).CornerRadius = UDim.new(0, 12)
 
 local InfoStroke = Instance.new("UIStroke", TargetInfoFrame)
-InfoStroke.Color = Color3.fromRGB(255, 60, 60)
+InfoStroke.Color = Color3.fromRGB(255, 60, 90)
 InfoStroke.Thickness = 1.5
 
 local TargetName = Instance.new("TextLabel")
-TargetName.Size = UDim2.new(1, -16, 0, 22)
-TargetName.Position = UDim2.new(0, 8, 0, 6)
+TargetName.Size = UDim2.new(1, -16, 0, 24)
+TargetName.Position = UDim2.new(0, 10, 0, 6)
 TargetName.BackgroundTransparency = 1
 TargetName.Text = "Target: None"
 TargetName.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -120,9 +121,9 @@ TargetName.TextXAlignment = Enum.TextXAlignment.Left
 TargetName.Parent = TargetInfoFrame
 
 local HealthBarBackground = Instance.new("Frame")
-HealthBarBackground.Size = UDim2.new(1, -16, 0, 10)
-HealthBarBackground.Position = UDim2.new(0, 8, 0, 32)
-HealthBarBackground.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+HealthBarBackground.Size = UDim2.new(1, -20, 0, 8)
+HealthBarBackground.Position = UDim2.new(0, 10, 0, 34)
+HealthBarBackground.BackgroundColor3 = Color3.fromRGB(30, 32, 45)
 HealthBarBackground.BorderSizePixel = 0
 HealthBarBackground.Parent = TargetInfoFrame
 
@@ -130,89 +131,105 @@ Instance.new("UICorner", HealthBarBackground).CornerRadius = UDim.new(0, 4)
 
 local HealthBarFill = Instance.new("Frame")
 HealthBarFill.Size = UDim2.new(1, 0, 1, 0)
-HealthBarFill.BackgroundColor3 = Color3.fromRGB(50, 205, 50)
+HealthBarFill.BackgroundColor3 = Color3.fromRGB(0, 230, 140)
 HealthBarFill.BorderSizePixel = 0
 HealthBarFill.Parent = HealthBarBackground
 
 Instance.new("UICorner", HealthBarFill).CornerRadius = UDim.new(0, 4)
 
 local TargetDistLabel = Instance.new("TextLabel")
-TargetDistLabel.Size = UDim2.new(1, -16, 0, 20)
-TargetDistLabel.Position = UDim2.new(0, 8, 0, 46)
+TargetDistLabel.Size = UDim2.new(1, -20, 0, 20)
+TargetDistLabel.Position = UDim2.new(0, 10, 0, 48)
 TargetDistLabel.BackgroundTransparency = 1
-TargetDistLabel.Text = "HP: 100% | Distance: 0m"
-TargetDistLabel.TextColor3 = Color3.fromRGB(180, 180, 190)
+TargetDistLabel.Text = "HP: 100%  |  Distance: 0m"
+TargetDistLabel.TextColor3 = Color3.fromRGB(170, 175, 195)
 TargetDistLabel.Font = Enum.Font.GothamSemibold
 TargetDistLabel.TextSize = 11
 TargetDistLabel.TextXAlignment = Enum.TextXAlignment.Left
 TargetDistLabel.Parent = TargetInfoFrame
 
 ---------------------------------------------------------
--- 🖼️ MAIN UI PANEL
+-- 🖼️ MAIN UI PANEL (LUXURY DARK THEME)
 ---------------------------------------------------------
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
-MainFrame.Size = UDim2.new(0, 360, 0, 310)
+MainFrame.Size = UDim2.new(0, 365, 0, 315)
 MainFrame.Position = UDim2.new(0.05, 0, 0.22, 0)
-MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+MainFrame.BackgroundColor3 = Color3.fromRGB(12, 14, 20)
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
 MainFrame.Draggable = true
 MainFrame.ClipsDescendants = true
 MainFrame.Parent = ScreenGui
 
-Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 12)
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 14)
 
 local MainStroke = Instance.new("UIStroke", MainFrame)
-MainStroke.Color = Color3.fromRGB(45, 45, 60)
+MainStroke.Color = Color3.fromRGB(35, 42, 60)
 MainStroke.Thickness = 1.5
+
+-- Top Neon Line Accent
+local NeonLine = Instance.new("Frame")
+NeonLine.Size = UDim2.new(1, 0, 0, 2)
+NeonLine.Position = UDim2.new(0, 0, 0, 0)
+NeonLine.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+NeonLine.BorderSizePixel = 0
+NeonLine.Parent = MainFrame
 
 -- Header Bar
 local Header = Instance.new("Frame")
 Header.Size = UDim2.new(1, 0, 0, 42)
-Header.BackgroundColor3 = Color3.fromRGB(22, 22, 30)
+Header.BackgroundColor3 = Color3.fromRGB(18, 20, 28)
 Header.BorderSizePixel = 0
 Header.Parent = MainFrame
 
-Instance.new("UICorner", Header).CornerRadius = UDim.new(0, 12)
+Instance.new("UICorner", Header).CornerRadius = UDim.new(0, 14)
 
 local CreditTitle = Instance.new("TextLabel")
 CreditTitle.Size = UDim2.new(0.48, 0, 1, 0)
 CreditTitle.Position = UDim2.new(0, 14, 0, 0)
 CreditTitle.BackgroundTransparency = 1
-CreditTitle.Text = "Fahprathan script"
+CreditTitle.Text = "✦ Fahprathan"
 CreditTitle.TextColor3 = Color3.fromRGB(255, 215, 0)
 CreditTitle.TextXAlignment = Enum.TextXAlignment.Left
 CreditTitle.Font = Enum.Font.GothamBold
 CreditTitle.TextSize = 15
 CreditTitle.Parent = Header
 
--- Ping / FPS Status Indicator
+-- Ping / FPS Status Badge
+local StatusFrame = Instance.new("Frame")
+StatusFrame.Size = UDim2.new(0, 125, 0, 22)
+StatusFrame.Position = UDim2.new(0.5, -5, 0.5, -11)
+StatusFrame.BackgroundColor3 = Color3.fromRGB(25, 28, 40)
+StatusFrame.BorderSizePixel = 0
+StatusFrame.Parent = Header
+
+Instance.new("UICorner", StatusFrame).CornerRadius = UDim.new(0, 6)
+
 local StatusLabel = Instance.new("TextLabel")
-StatusLabel.Size = UDim2.new(0.32, 0, 1, 0)
-StatusLabel.Position = UDim2.new(0.5, 0, 0, 0)
+StatusLabel.Size = UDim2.new(1, 0, 1, 0)
 StatusLabel.BackgroundTransparency = 1
-StatusLabel.Text = "FPS: 60 | Ping: 0"
-StatusLabel.TextColor3 = Color3.fromRGB(150, 150, 170)
-StatusLabel.Font = Enum.Font.GothamSemibold
+StatusLabel.Text = "FPS: 60  |  0ms"
+StatusLabel.TextColor3 = Color3.fromRGB(0, 220, 255)
+StatusLabel.Font = Enum.Font.GothamBold
 StatusLabel.TextSize = 10
-StatusLabel.Parent = Header
+StatusLabel.Parent = StatusFrame
 
 -- Minimize Button
 local MinimizeBtn = Instance.new("TextButton")
 MinimizeBtn.Size = UDim2.new(0, 28, 0, 28)
 MinimizeBtn.Position = UDim2.new(1, -34, 0, 7)
-MinimizeBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 48)
+MinimizeBtn.BackgroundColor3 = Color3.fromRGB(30, 34, 48)
 MinimizeBtn.Text = "-"
 MinimizeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 MinimizeBtn.Font = Enum.Font.GothamBold
 MinimizeBtn.TextSize = 16
 MinimizeBtn.Parent = Header
 
-Instance.new("UICorner", MinimizeBtn).CornerRadius = UDim.new(0, 6)
+Instance.new("UICorner", MinimizeBtn).CornerRadius = UDim.new(0, 8)
 
 ---------------------------------------------------------
--- 📂 CONTENT & TAB SYSTEM (5 TABS)
+-- 📂 TAB SYSTEM (5 TABS)
 ---------------------------------------------------------
 local ContentFrame = Instance.new("Frame")
 ContentFrame.Size = UDim2.new(1, 0, 1, -42)
@@ -234,9 +251,9 @@ TabListLayout.Padding = UDim.new(0, 4)
 local function createTabBtn(text, layoutOrder)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(0.188, 0, 1, 0)
-    btn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+    btn.BackgroundColor3 = Color3.fromRGB(20, 23, 32)
     btn.Text = text
-    btn.TextColor3 = Color3.fromRGB(160, 160, 180)
+    btn.TextColor3 = Color3.fromRGB(150, 155, 175)
     btn.Font = Enum.Font.GothamSemibold
     btn.TextSize = 10
     btn.LayoutOrder = layoutOrder
@@ -277,14 +294,14 @@ local TargetTab = createTabContainer()
 local MiscTab = createTabContainer()
 
 AimTab.Visible = true
-Tab1Btn.BackgroundColor3 = Color3.fromRGB(60, 110, 240)
+Tab1Btn.BackgroundColor3 = Color3.fromRGB(0, 130, 230)
 Tab1Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
 
 local function switchTab(selectedBtn, selectedTab)
     for _, btn in ipairs(TabBar:GetChildren()) do
         if btn:IsA("TextButton") then
-            btn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-            btn.TextColor3 = Color3.fromRGB(160, 160, 180)
+            btn.BackgroundColor3 = Color3.fromRGB(20, 23, 32)
+            btn.TextColor3 = Color3.fromRGB(150, 155, 175)
         end
     end
     AimTab.Visible = false
@@ -293,7 +310,7 @@ local function switchTab(selectedBtn, selectedTab)
     TargetTab.Visible = false
     MiscTab.Visible = false
     
-    selectedBtn.BackgroundColor3 = Color3.fromRGB(60, 110, 240)
+    selectedBtn.BackgroundColor3 = Color3.fromRGB(0, 130, 230)
     selectedBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     selectedTab.Visible = true
 end
@@ -305,13 +322,13 @@ Tab4Btn.MouseButton1Click:Connect(function() switchTab(Tab4Btn, TargetTab) end)
 Tab5Btn.MouseButton1Click:Connect(function() switchTab(Tab5Btn, MiscTab) end)
 
 ---------------------------------------------------------
--- ⚙️ MENU CONTROLS
+-- ⚙️ MENU CONTROLS & STYLED BUTTONS
 ---------------------------------------------------------
 
 -- 1. Aim Tab
 local AimlockToggle = Instance.new("TextButton")
 AimlockToggle.Size = UDim2.new(1, 0, 0, 38)
-AimlockToggle.BackgroundColor3 = Color3.fromRGB(40, 160, 80)
+AimlockToggle.BackgroundColor3 = Color3.fromRGB(0, 170, 100)
 AimlockToggle.Text = "Cam Lock (กล้องตาม): ON"
 AimlockToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
 AimlockToggle.Font = Enum.Font.GothamBold
@@ -321,7 +338,7 @@ Instance.new("UICorner", AimlockToggle).CornerRadius = UDim.new(0, 8)
 
 local SilentAimToggle = Instance.new("TextButton")
 SilentAimToggle.Size = UDim2.new(1, 0, 0, 38)
-SilentAimToggle.BackgroundColor3 = Color3.fromRGB(40, 160, 80)
+SilentAimToggle.BackgroundColor3 = Color3.fromRGB(0, 170, 100)
 SilentAimToggle.Text = "Silent Aim (กระสุนโค้ง): ON"
 SilentAimToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
 SilentAimToggle.Font = Enum.Font.GothamBold
@@ -333,7 +350,7 @@ local SmoothLabel = Instance.new("TextLabel")
 SmoothLabel.Size = UDim2.new(1, 0, 0, 18)
 SmoothLabel.BackgroundTransparency = 1
 SmoothLabel.Text = "Cam Smoothness (ความพริ้ว): " .. config.smoothness
-SmoothLabel.TextColor3 = Color3.fromRGB(200, 200, 210)
+SmoothLabel.TextColor3 = Color3.fromRGB(190, 195, 215)
 SmoothLabel.Font = Enum.Font.GothamSemibold
 SmoothLabel.TextSize = 11
 SmoothLabel.Parent = AimTab
@@ -345,7 +362,7 @@ SmoothFrame.Parent = AimTab
 
 local SmoothMinus = Instance.new("TextButton")
 SmoothMinus.Size = UDim2.new(0.48, 0, 1, 0)
-SmoothMinus.BackgroundColor3 = Color3.fromRGB(30, 30, 42)
+SmoothMinus.BackgroundColor3 = Color3.fromRGB(24, 28, 40)
 SmoothMinus.Text = "- Smooth"
 SmoothMinus.TextColor3 = Color3.fromRGB(255, 255, 255)
 SmoothMinus.Font = Enum.Font.GothamSemibold
@@ -356,7 +373,7 @@ Instance.new("UICorner", SmoothMinus).CornerRadius = UDim.new(0, 6)
 local SmoothPlus = Instance.new("TextButton")
 SmoothPlus.Size = UDim2.new(0.48, 0, 1, 0)
 SmoothPlus.Position = UDim2.new(0.52, 0, 0, 0)
-SmoothPlus.BackgroundColor3 = Color3.fromRGB(30, 30, 42)
+SmoothPlus.BackgroundColor3 = Color3.fromRGB(24, 28, 40)
 SmoothPlus.Text = "+ Smooth"
 SmoothPlus.TextColor3 = Color3.fromRGB(255, 255, 255)
 SmoothPlus.Font = Enum.Font.GothamSemibold
@@ -367,7 +384,7 @@ Instance.new("UICorner", SmoothPlus).CornerRadius = UDim.new(0, 6)
 -- 2. Visuals Tab
 local EspToggle = Instance.new("TextButton")
 EspToggle.Size = UDim2.new(1, 0, 0, 38)
-EspToggle.BackgroundColor3 = Color3.fromRGB(40, 160, 80)
+EspToggle.BackgroundColor3 = Color3.fromRGB(0, 170, 100)
 EspToggle.Text = "ESP Box & Name: ON"
 EspToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
 EspToggle.Font = Enum.Font.GothamBold
@@ -377,7 +394,7 @@ Instance.new("UICorner", EspToggle).CornerRadius = UDim.new(0, 8)
 
 local TargetTracerToggle = Instance.new("TextButton")
 TargetTracerToggle.Size = UDim2.new(1, 0, 0, 38)
-TargetTracerToggle.BackgroundColor3 = Color3.fromRGB(40, 160, 80)
+TargetTracerToggle.BackgroundColor3 = Color3.fromRGB(0, 170, 100)
 TargetTracerToggle.Text = "Locked Target Line: ON"
 TargetTracerToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
 TargetTracerToggle.Font = Enum.Font.GothamBold
@@ -387,7 +404,7 @@ Instance.new("UICorner", TargetTracerToggle).CornerRadius = UDim.new(0, 8)
 
 local RainbowFovToggle = Instance.new("TextButton")
 RainbowFovToggle.Size = UDim2.new(1, 0, 0, 38)
-RainbowFovToggle.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
+RainbowFovToggle.BackgroundColor3 = Color3.fromRGB(180, 45, 55)
 RainbowFovToggle.Text = "Rainbow FOV Circle: OFF"
 RainbowFovToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
 RainbowFovToggle.Font = Enum.Font.GothamBold
@@ -400,7 +417,7 @@ local FovLabel = Instance.new("TextLabel")
 FovLabel.Size = UDim2.new(1, 0, 0, 18)
 FovLabel.BackgroundTransparency = 1
 FovLabel.Text = "FOV Circle Size: " .. config.fov
-FovLabel.TextColor3 = Color3.fromRGB(200, 200, 210)
+FovLabel.TextColor3 = Color3.fromRGB(190, 195, 215)
 FovLabel.Font = Enum.Font.GothamSemibold
 FovLabel.TextSize = 11
 FovLabel.Parent = RangeTab
@@ -412,7 +429,7 @@ FovControlFrame.Parent = RangeTab
 
 local FovMinus = Instance.new("TextButton")
 FovMinus.Size = UDim2.new(0.48, 0, 1, 0)
-FovMinus.BackgroundColor3 = Color3.fromRGB(30, 30, 42)
+FovMinus.BackgroundColor3 = Color3.fromRGB(24, 28, 40)
 FovMinus.Text = "- 10 FOV"
 FovMinus.TextColor3 = Color3.fromRGB(255, 255, 255)
 FovMinus.Font = Enum.Font.GothamSemibold
@@ -423,7 +440,7 @@ Instance.new("UICorner", FovMinus).CornerRadius = UDim.new(0, 6)
 local FovPlus = Instance.new("TextButton")
 FovPlus.Size = UDim2.new(0.48, 0, 1, 0)
 FovPlus.Position = UDim2.new(0.52, 0, 0, 0)
-FovPlus.BackgroundColor3 = Color3.fromRGB(30, 30, 42)
+FovPlus.BackgroundColor3 = Color3.fromRGB(24, 28, 40)
 FovPlus.Text = "+ 10 FOV"
 FovPlus.TextColor3 = Color3.fromRGB(255, 255, 255)
 FovPlus.Font = Enum.Font.GothamSemibold
@@ -435,7 +452,7 @@ local LockRangeLabel = Instance.new("TextLabel")
 LockRangeLabel.Size = UDim2.new(1, 0, 0, 18)
 LockRangeLabel.BackgroundTransparency = 1
 LockRangeLabel.Text = "Lock Distance: " .. config.maxLockDistance .. "m"
-LockRangeLabel.TextColor3 = Color3.fromRGB(200, 200, 210)
+LockRangeLabel.TextColor3 = Color3.fromRGB(190, 195, 215)
 LockRangeLabel.Font = Enum.Font.GothamSemibold
 LockRangeLabel.TextSize = 11
 LockRangeLabel.Parent = RangeTab
@@ -447,7 +464,7 @@ LockRangeFrame.Parent = RangeTab
 
 local LockRangeMinus = Instance.new("TextButton")
 LockRangeMinus.Size = UDim2.new(0.48, 0, 1, 0)
-LockRangeMinus.BackgroundColor3 = Color3.fromRGB(30, 30, 42)
+LockRangeMinus.BackgroundColor3 = Color3.fromRGB(24, 28, 40)
 LockRangeMinus.Text = "- 50m Lock"
 LockRangeMinus.TextColor3 = Color3.fromRGB(255, 255, 255)
 LockRangeMinus.Font = Enum.Font.GothamSemibold
@@ -458,7 +475,7 @@ Instance.new("UICorner", LockRangeMinus).CornerRadius = UDim.new(0, 6)
 local LockRangePlus = Instance.new("TextButton")
 LockRangePlus.Size = UDim2.new(0.48, 0, 1, 0)
 LockRangePlus.Position = UDim2.new(0.52, 0, 0, 0)
-LockRangePlus.BackgroundColor3 = Color3.fromRGB(30, 30, 42)
+LockRangePlus.BackgroundColor3 = Color3.fromRGB(24, 28, 40)
 LockRangePlus.Text = "+ 50m Lock"
 LockRangePlus.TextColor3 = Color3.fromRGB(255, 255, 255)
 LockRangePlus.Font = Enum.Font.GothamSemibold
@@ -469,7 +486,7 @@ Instance.new("UICorner", LockRangePlus).CornerRadius = UDim.new(0, 6)
 -- 4. Target Tab
 local HeadBtn = Instance.new("TextButton")
 HeadBtn.Size = UDim2.new(1, 0, 0, 40)
-HeadBtn.BackgroundColor3 = Color3.fromRGB(60, 110, 240)
+HeadBtn.BackgroundColor3 = Color3.fromRGB(0, 130, 230)
 HeadBtn.Text = "Target: Head (หัว)"
 HeadBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 HeadBtn.Font = Enum.Font.GothamSemibold
@@ -479,34 +496,100 @@ Instance.new("UICorner", HeadBtn).CornerRadius = UDim.new(0, 8)
 
 local TorsoBtn = Instance.new("TextButton")
 TorsoBtn.Size = UDim2.new(1, 0, 0, 40)
-TorsoBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+TorsoBtn.BackgroundColor3 = Color3.fromRGB(20, 23, 32)
 TorsoBtn.Text = "Target: HumanoidRootPart (ลำตัว)"
-TorsoBtn.TextColor3 = Color3.fromRGB(180, 180, 190)
+TorsoBtn.TextColor3 = Color3.fromRGB(160, 165, 185)
 TorsoBtn.Font = Enum.Font.GothamSemibold
 TorsoBtn.TextSize = 12
 TorsoBtn.Parent = TargetTab
 Instance.new("UICorner", TorsoBtn).CornerRadius = UDim.new(0, 8)
 
--- 5. Misc Tab
+-- 5. Misc Tab (Includes Remote Buy)
 local TargetInfoToggle = Instance.new("TextButton")
-TargetInfoToggle.Size = UDim2.new(1, 0, 0, 38)
-TargetInfoToggle.BackgroundColor3 = Color3.fromRGB(40, 160, 80)
+TargetInfoToggle.Size = UDim2.new(1, 0, 0, 32)
+TargetInfoToggle.BackgroundColor3 = Color3.fromRGB(0, 170, 100)
 TargetInfoToggle.Text = "Target Info Display: ON"
 TargetInfoToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
 TargetInfoToggle.Font = Enum.Font.GothamBold
-TargetInfoToggle.TextSize = 12
+TargetInfoToggle.TextSize = 11
 TargetInfoToggle.Parent = MiscTab
-Instance.new("UICorner", TargetInfoToggle).CornerRadius = UDim.new(0, 8)
+Instance.new("UICorner", TargetInfoToggle).CornerRadius = UDim.new(0, 6)
 
 local CrosshairToggle = Instance.new("TextButton")
-CrosshairToggle.Size = UDim2.new(1, 0, 0, 38)
-CrosshairToggle.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
+CrosshairToggle.Size = UDim2.new(1, 0, 0, 32)
+CrosshairToggle.BackgroundColor3 = Color3.fromRGB(180, 45, 55)
 CrosshairToggle.Text = "Custom Center Crosshair: OFF"
 CrosshairToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
 CrosshairToggle.Font = Enum.Font.GothamBold
-CrosshairToggle.TextSize = 12
+CrosshairToggle.TextSize = 11
 CrosshairToggle.Parent = MiscTab
-Instance.new("UICorner", CrosshairToggle).CornerRadius = UDim.new(0, 8)
+Instance.new("UICorner", CrosshairToggle).CornerRadius = UDim.new(0, 6)
+
+local BuyGunsBtn = Instance.new("TextButton")
+BuyGunsBtn.Size = UDim2.new(1, 0, 0, 34)
+BuyGunsBtn.BackgroundColor3 = Color3.fromRGB(0, 130, 230)
+BuyGunsBtn.Text = "🛒 Buy All Guns (ซื้อปืนทั้งหมด)"
+BuyGunsBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+BuyGunsBtn.Font = Enum.Font.GothamBold
+BuyGunsBtn.TextSize = 11
+BuyGunsBtn.Parent = MiscTab
+Instance.new("UICorner", BuyGunsBtn).CornerRadius = UDim.new(0, 6)
+
+local BuyFoodBtn = Instance.new("TextButton")
+BuyFoodBtn.Size = UDim2.new(1, 0, 0, 34)
+BuyFoodBtn.BackgroundColor3 = Color3.fromRGB(220, 130, 30)
+BuyFoodBtn.Text = "🍔 Buy Food (ซื้ออาหารเติมเลือด)"
+BuyFoodBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+BuyFoodBtn.Font = Enum.Font.GothamBold
+BuyFoodBtn.TextSize = 11
+BuyFoodBtn.Parent = MiscTab
+Instance.new("UICorner", BuyFoodBtn).CornerRadius = UDim.new(0, 6)
+
+---------------------------------------------------------
+-- 🛍️ REMOTE BUY LOGIC
+---------------------------------------------------------
+
+local function buyItemRemote(itemName)
+    pcall(function()
+        local shopFolder = workspace:FindFirstChild("Ignored") and workspace.Ignored:FindFirstChild("Shop") or workspace:FindFirstChild("Shop")
+        if shopFolder then
+            for _, shop in ipairs(shopFolder:GetChildren()) do
+                if string.find(string.lower(shop.Name), string.lower(itemName)) then
+                    local clickDetector = shop:FindFirstChildOfClass("ClickDetector") or shop:FindFirstChild("Head") and shop.Head:FindFirstChildOfClass("ClickDetector")
+                    if clickDetector and lp.Character and lp.Character:FindFirstChild("HumanoidRootPart") then
+                        local oldCF = lp.Character.HumanoidRootPart.CFrame
+                        local mainPart = shop:FindFirstChild("Head") or shop:FindFirstChild("Part") or shop:FindFirstChild("MainPart") or shop.PrimaryPart
+                        if mainPart then
+                            lp.Character.HumanoidRootPart.CFrame = mainPart.CFrame * CFrame.new(0, 0, 2)
+                            task.wait(0.05)
+                            fireclickdetector(clickDetector)
+                            task.wait(0.05)
+                            lp.Character.HumanoidRootPart.CFrame = oldCF
+                        end
+                    end
+                end
+            end
+        end
+    end)
+end
+
+BuyGunsBtn.MouseButton1Click:Connect(function()
+    local guns = {"[LMG]", "[Shotgun]", "[TacticalShotgun]", "[Rifle]", "[Revolver]", "[SMG]", "[Glock]"}
+    for _, gun in ipairs(guns) do
+        buyItemRemote(gun)
+        task.wait(0.1)
+    end
+    sg:SetCore("SendNotification", { Title = "Fahprathan Script", Text = "Bought All Guns!", Duration = 1.5 })
+end)
+
+BuyFoodBtn.MouseButton1Click:Connect(function()
+    local foods = {"[Pizza]", "[Taco]", "[Chicken]", "[Lettuce]"}
+    for _, food in ipairs(foods) do
+        buyItemRemote(food)
+        task.wait(0.1)
+    end
+    sg:SetCore("SendNotification", { Title = "Fahprathan Script", Text = "Bought Food!", Duration = 1.5 })
+end)
 
 ---------------------------------------------------------
 -- ⚙️ UI EVENT LOGIC
@@ -515,13 +598,13 @@ Instance.new("UICorner", CrosshairToggle).CornerRadius = UDim.new(0, 8)
 AimlockToggle.MouseButton1Click:Connect(function()
     config.useAimlock = not config.useAimlock
     AimlockToggle.Text = config.useAimlock and "Cam Lock (กล้องตาม): ON" or "Cam Lock (กล้องตาม): OFF"
-    AimlockToggle.BackgroundColor3 = config.useAimlock and Color3.fromRGB(40, 160, 80) or Color3.fromRGB(180, 50, 50)
+    AimlockToggle.BackgroundColor3 = config.useAimlock and Color3.fromRGB(0, 170, 100) or Color3.fromRGB(180, 45, 55)
 end)
 
 SilentAimToggle.MouseButton1Click:Connect(function()
     config.useSilentAim = not config.useSilentAim
     SilentAimToggle.Text = config.useSilentAim and "Silent Aim (กระสุนโค้ง): ON" or "Silent Aim (กระสุนโค้ง): OFF"
-    SilentAimToggle.BackgroundColor3 = config.useSilentAim and Color3.fromRGB(40, 160, 80) or Color3.fromRGB(180, 50, 50)
+    SilentAimToggle.BackgroundColor3 = config.useSilentAim and Color3.fromRGB(0, 170, 100) or Color3.fromRGB(180, 45, 55)
 end)
 
 SmoothMinus.MouseButton1Click:Connect(function()
@@ -537,7 +620,7 @@ end)
 EspToggle.MouseButton1Click:Connect(function()
     config.useEsp = not config.useEsp
     EspToggle.Text = config.useEsp and "ESP Box & Name: ON" or "ESP Box & Name: OFF"
-    EspToggle.BackgroundColor3 = config.useEsp and Color3.fromRGB(40, 160, 80) or Color3.fromRGB(180, 50, 50)
+    EspToggle.BackgroundColor3 = config.useEsp and Color3.fromRGB(0, 170, 100) or Color3.fromRGB(180, 45, 55)
     if not config.useEsp then
         for _, v in pairs(espDrawings) do for _, d in pairs(v) do d.Visible = false end end
     end
@@ -546,13 +629,13 @@ end)
 TargetTracerToggle.MouseButton1Click:Connect(function()
     config.useTargetTracer = not config.useTargetTracer
     TargetTracerToggle.Text = config.useTargetTracer and "Locked Target Line: ON" or "Locked Target Line: OFF"
-    TargetTracerToggle.BackgroundColor3 = config.useTargetTracer and Color3.fromRGB(40, 160, 80) or Color3.fromRGB(180, 50, 50)
+    TargetTracerToggle.BackgroundColor3 = config.useTargetTracer and Color3.fromRGB(0, 170, 100) or Color3.fromRGB(180, 45, 55)
 end)
 
 RainbowFovToggle.MouseButton1Click:Connect(function()
     config.useRainbowFov = not config.useRainbowFov
     RainbowFovToggle.Text = config.useRainbowFov and "Rainbow FOV Circle: ON" or "Rainbow FOV Circle: OFF"
-    RainbowFovToggle.BackgroundColor3 = config.useRainbowFov and Color3.fromRGB(40, 160, 80) or Color3.fromRGB(180, 50, 50)
+    RainbowFovToggle.BackgroundColor3 = config.useRainbowFov and Color3.fromRGB(0, 170, 100) or Color3.fromRGB(180, 45, 55)
 end)
 
 LockRangeMinus.MouseButton1Click:Connect(function()
@@ -578,14 +661,14 @@ end)
 TargetInfoToggle.MouseButton1Click:Connect(function()
     config.useTargetInfo = not config.useTargetInfo
     TargetInfoToggle.Text = config.useTargetInfo and "Target Info Display: ON" or "Target Info Display: OFF"
-    TargetInfoToggle.BackgroundColor3 = config.useTargetInfo and Color3.fromRGB(40, 160, 80) or Color3.fromRGB(180, 50, 50)
+    TargetInfoToggle.BackgroundColor3 = config.useTargetInfo and Color3.fromRGB(0, 170, 100) or Color3.fromRGB(180, 45, 55)
     if not config.useTargetInfo then TargetInfoFrame.Visible = false end
 end)
 
 CrosshairToggle.MouseButton1Click:Connect(function()
     config.useCrosshair = not config.useCrosshair
     CrosshairToggle.Text = config.useCrosshair and "Custom Center Crosshair: ON" or "Custom Center Crosshair: OFF"
-    CrosshairToggle.BackgroundColor3 = config.useCrosshair and Color3.fromRGB(40, 160, 80) or Color3.fromRGB(180, 50, 50)
+    CrosshairToggle.BackgroundColor3 = config.useCrosshair and Color3.fromRGB(0, 170, 100) or Color3.fromRGB(180, 45, 55)
     crosshairDot.Visible = config.useCrosshair
 end)
 
@@ -594,11 +677,11 @@ MinimizeBtn.MouseButton1Click:Connect(function()
     isMinimized = not isMinimized
     if isMinimized then
         ContentFrame.Visible = false
-        MainFrame.Size = UDim2.new(0, 360, 0, 42)
+        MainFrame.Size = UDim2.new(0, 365, 0, 42)
         MinimizeBtn.Text = "+"
     else
         ContentFrame.Visible = true
-        MainFrame.Size = UDim2.new(0, 360, 0, 310)
+        MainFrame.Size = UDim2.new(0, 365, 0, 315)
         MinimizeBtn.Text = "-"
     end
 end)
@@ -606,19 +689,19 @@ end)
 HeadBtn.MouseButton1Click:Connect(function()
     config.part = "Head"
     config.y_offset = -0.6
-    HeadBtn.BackgroundColor3 = Color3.fromRGB(60, 110, 240)
+    HeadBtn.BackgroundColor3 = Color3.fromRGB(0, 130, 230)
     HeadBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    TorsoBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-    TorsoBtn.TextColor3 = Color3.fromRGB(180, 180, 190)
+    TorsoBtn.BackgroundColor3 = Color3.fromRGB(20, 23, 32)
+    TorsoBtn.TextColor3 = Color3.fromRGB(160, 165, 185)
 end)
 
 TorsoBtn.MouseButton1Click:Connect(function()
     config.part = "HumanoidRootPart"
     config.y_offset = 0
-    TorsoBtn.BackgroundColor3 = Color3.fromRGB(60, 110, 240)
+    TorsoBtn.BackgroundColor3 = Color3.fromRGB(0, 130, 230)
     TorsoBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    HeadBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-    HeadBtn.TextColor3 = Color3.fromRGB(180, 180, 190)
+    HeadBtn.BackgroundColor3 = Color3.fromRGB(20, 23, 32)
+    HeadBtn.TextColor3 = Color3.fromRGB(160, 165, 185)
 end)
 
 ---------------------------------------------------------
@@ -696,9 +779,10 @@ setreadonly(gmt, true)
 LockBtn.MouseButton1Click:Connect(function()
     if target then
         target = nil
-        LockBtn.Text = "LOCK"
-        LockBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-        LockStroke.Color = Color3.fromRGB(60, 120, 255)
+        LockBtn.Text = "⚡ LOCK"
+        LockBtn.BackgroundColor3 = Color3.fromRGB(20, 22, 30)
+        LockBtn.TextColor3 = Color3.fromRGB(0, 230, 255)
+        LockStroke.Color = Color3.fromRGB(0, 170, 255)
         TargetInfoFrame.Visible = false
         notify("Fahprathan Script", "Unlocked")
     else
@@ -708,8 +792,9 @@ LockBtn.MouseButton1Click:Connect(function()
             local plrName = plrs:GetPlayerFromCharacter(target.Parent)
             local name = plrName and plrName.DisplayName or "Player"
             LockBtn.Text = "UNLOCK"
-            LockBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 50)
-            LockStroke.Color = Color3.fromRGB(255, 60, 60)
+            LockBtn.BackgroundColor3 = Color3.fromRGB(180, 45, 55)
+            LockBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            LockStroke.Color = Color3.fromRGB(255, 60, 90)
             notify("Fahprathan Script", "Locked: " .. name)
         end
     end
@@ -730,7 +815,7 @@ rs.RenderStepped:Connect(function()
     -- FPS & Ping Counter Update
     local fps = math.floor(1 / rs.RenderStepped:Wait())
     local ping = math.floor(stats.Network.ServerStatsItem["Data Ping"]:GetValue())
-    StatusLabel.Text = "FPS: " .. fps .. " | Ping: " .. ping .. "ms"
+    StatusLabel.Text = "FPS: " .. fps .. "  |  " .. ping .. "ms"
 
     -- Rainbow FOV Mode
     if config.useRainbowFov then
@@ -762,7 +847,7 @@ rs.RenderStepped:Connect(function()
                 local dist = math.floor((hrp.Position - cam.CFrame.Position).Magnitude)
                 
                 TargetName.Text = "Target: " .. (targetPlayer and targetPlayer.DisplayName or target.Parent.Name)
-                TargetDistLabel.Text = "HP: " .. math.floor(healthPct * 100) .. "% | Distance: " .. dist .. "m"
+                TargetDistLabel.Text = "HP: " .. math.floor(healthPct * 100) .. "%  |  Distance: " .. dist .. "m"
                 HealthBarFill.Size = UDim2.new(healthPct, 0, 1, 0)
                 TargetInfoFrame.Visible = true
             end
@@ -784,9 +869,10 @@ rs.RenderStepped:Connect(function()
     else
         if target then
             target = nil
-            LockBtn.Text = "LOCK"
-            LockBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-            LockStroke.Color = Color3.fromRGB(60, 120, 255)
+            LockBtn.Text = "⚡ LOCK"
+            LockBtn.BackgroundColor3 = Color3.fromRGB(20, 22, 30)
+            LockBtn.TextColor3 = Color3.fromRGB(0, 230, 255)
+            LockStroke.Color = Color3.fromRGB(0, 170, 255)
             notify("Fahprathan Script", "Target lost")
         end
         if not config.useRainbowFov then circle.Color = config.idle_clr end
@@ -824,7 +910,7 @@ rs.RenderStepped:Connect(function()
                         
                         box.Size = Vector2.new(sizeX, sizeY)
                         box.Position = Vector2.new(pos.X - sizeX / 2, pos.Y - sizeY / 2)
-                        box.Color = (v.Character == (target and target.Parent)) and Color3.fromRGB(0, 255, 150) or Color3.fromRGB(255, 255, 255)
+                        box.Color = (v.Character == (target and target.Parent)) and Color3.fromRGB(0, 230, 140) or Color3.fromRGB(255, 255, 255)
                         box.Visible = true
 
                         nameText.Text = v.DisplayName .. " [" .. math.floor(dist) .. "m]"
