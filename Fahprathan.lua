@@ -14,10 +14,11 @@ local config = {
     useAimlock = true,
     useSilentAim = true,
     useEsp = true,
-    useEspTracers = false,   -- เส้นลาก ESP ไปหาทุกคน
-    useTargetTracer = true,  -- เส้นลากไปหาเป้าหมายที่ล็อคอยู่
-    useRainbowFov = false,   -- วงกลม FOV สีรุ้ง
-    smoothness = 0.15,       -- ความพริ้วของกล้อง (0.01 = นุ่มมาก, 1 = วาร์ปทันที)
+    useTargetTracer = true,  -- เส้นลากไปหาเป้าหมาย
+    useRainbowFov = false,   -- FOV สีรุ้ง
+    useCrosshair = false,    -- เป้าเล็งกลางจอ (Custom Crosshair)
+    useTargetInfo = true,    -- หน้าต่างโชว์ข้อมูลเป้าหมาย
+    smoothness = 0.15,       -- ความพริ้วของกล้อง
     maxLockDistance = 300,
     maxEspDistance = 500,
     part = "Head",
@@ -31,6 +32,13 @@ local config = {
 local target = nil
 local espDrawings = {}
 local rainbowHue = 0
+
+-- Create Custom Crosshair (Center Dot)
+local crosshairDot = Drawing.new("Circle")
+crosshairDot.Visible = false
+crosshairDot.Radius = 3.5
+crosshairDot.Filled = true
+crosshairDot.Color = Color3.fromRGB(0, 255, 200)
 
 -- Create Target Tracer Line
 local targetLine = Drawing.new("Line")
@@ -50,7 +58,7 @@ circle.Color = config.idle_clr
 -- 🎨 CREATE MAIN GUI CONTAINER
 ---------------------------------------------------------
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "FahprathanV3UI"
+ScreenGui.Name = "FahprathanFinalUI"
 ScreenGui.ResetOnSpawn = false
 
 if syn and syn.protect_gui then
@@ -61,7 +69,7 @@ else
 end
 
 ---------------------------------------------------------
--- 🔴 FLOATING LOCK BUTTON (MODERN LOOK)
+-- 🔴 FLOATING LOCK BUTTON
 ---------------------------------------------------------
 local LockBtn = Instance.new("TextButton")
 LockBtn.Name = "FloatingLockBtn"
@@ -83,7 +91,64 @@ LockStroke.Color = Color3.fromRGB(60, 120, 255)
 LockStroke.Thickness = 2.5
 
 ---------------------------------------------------------
--- 🖼️ MAIN UI PANEL (LUXURY DARK THEME)
+-- 🩸 TARGET INFO DISPLAY CARD
+---------------------------------------------------------
+local TargetInfoFrame = Instance.new("Frame")
+TargetInfoFrame.Name = "TargetInfoFrame"
+TargetInfoFrame.Size = UDim2.new(0, 220, 0, 75)
+TargetInfoFrame.Position = UDim2.new(0.5, -110, 0.78, 0)
+TargetInfoFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 22)
+TargetInfoFrame.BorderSizePixel = 0
+TargetInfoFrame.Visible = false
+TargetInfoFrame.Parent = ScreenGui
+
+Instance.new("UICorner", TargetInfoFrame).CornerRadius = UDim.new(0, 10)
+
+local InfoStroke = Instance.new("UIStroke", TargetInfoFrame)
+InfoStroke.Color = Color3.fromRGB(255, 60, 60)
+InfoStroke.Thickness = 1.5
+
+local TargetName = Instance.new("TextLabel")
+TargetName.Size = UDim2.new(1, -16, 0, 22)
+TargetName.Position = UDim2.new(0, 8, 0, 6)
+TargetName.BackgroundTransparency = 1
+TargetName.Text = "Target: None"
+TargetName.TextColor3 = Color3.fromRGB(255, 255, 255)
+TargetName.Font = Enum.Font.GothamBold
+TargetName.TextSize = 13
+TargetName.TextXAlignment = Enum.TextXAlignment.Left
+TargetName.Parent = TargetInfoFrame
+
+local HealthBarBackground = Instance.new("Frame")
+HealthBarBackground.Size = UDim2.new(1, -16, 0, 10)
+HealthBarBackground.Position = UDim2.new(0, 8, 0, 32)
+HealthBarBackground.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+HealthBarBackground.BorderSizePixel = 0
+HealthBarBackground.Parent = TargetInfoFrame
+
+Instance.new("UICorner", HealthBarBackground).CornerRadius = UDim.new(0, 4)
+
+local HealthBarFill = Instance.new("Frame")
+HealthBarFill.Size = UDim2.new(1, 0, 1, 0)
+HealthBarFill.BackgroundColor3 = Color3.fromRGB(50, 205, 50)
+HealthBarFill.BorderSizePixel = 0
+HealthBarFill.Parent = HealthBarBackground
+
+Instance.new("UICorner", HealthBarFill).CornerRadius = UDim.new(0, 4)
+
+local TargetDistLabel = Instance.new("TextLabel")
+TargetDistLabel.Size = UDim2.new(1, -16, 0, 20)
+TargetDistLabel.Position = UDim2.new(0, 8, 0, 46)
+TargetDistLabel.BackgroundTransparency = 1
+TargetDistLabel.Text = "HP: 100% | Distance: 0m"
+TargetDistLabel.TextColor3 = Color3.fromRGB(180, 180, 190)
+TargetDistLabel.Font = Enum.Font.GothamSemibold
+TargetDistLabel.TextSize = 11
+TargetDistLabel.TextXAlignment = Enum.TextXAlignment.Left
+TargetDistLabel.Parent = TargetInfoFrame
+
+---------------------------------------------------------
+-- 🖼️ MAIN UI PANEL
 ---------------------------------------------------------
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
@@ -112,7 +177,7 @@ Header.Parent = MainFrame
 Instance.new("UICorner", Header).CornerRadius = UDim.new(0, 12)
 
 local CreditTitle = Instance.new("TextLabel")
-CreditTitle.Size = UDim2.new(0.5, 0, 1, 0)
+CreditTitle.Size = UDim2.new(0.48, 0, 1, 0)
 CreditTitle.Position = UDim2.new(0, 14, 0, 0)
 CreditTitle.BackgroundTransparency = 1
 CreditTitle.Text = "Fahprathan script"
@@ -124,8 +189,8 @@ CreditTitle.Parent = Header
 
 -- Ping / FPS Status Indicator
 local StatusLabel = Instance.new("TextLabel")
-StatusLabel.Size = UDim2.new(0.3, 0, 1, 0)
-StatusLabel.Position = UDim2.new(0.52, 0, 0, 0)
+StatusLabel.Size = UDim2.new(0.32, 0, 1, 0)
+StatusLabel.Position = UDim2.new(0.5, 0, 0, 0)
 StatusLabel.BackgroundTransparency = 1
 StatusLabel.Text = "FPS: 60 | Ping: 0"
 StatusLabel.TextColor3 = Color3.fromRGB(150, 150, 170)
@@ -147,7 +212,7 @@ MinimizeBtn.Parent = Header
 Instance.new("UICorner", MinimizeBtn).CornerRadius = UDim.new(0, 6)
 
 ---------------------------------------------------------
--- 📂 CONTENT & TAB SYSTEM
+-- 📂 CONTENT & TAB SYSTEM (5 TABS)
 ---------------------------------------------------------
 local ContentFrame = Instance.new("Frame")
 ContentFrame.Size = UDim2.new(1, 0, 1, -42)
@@ -164,16 +229,16 @@ TabBar.Parent = ContentFrame
 local TabListLayout = Instance.new("UIListLayout", TabBar)
 TabListLayout.FillDirection = Enum.FillDirection.Horizontal
 TabListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-TabListLayout.Padding = UDim.new(0, 5)
+TabListLayout.Padding = UDim.new(0, 4)
 
 local function createTabBtn(text, layoutOrder)
     local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(0.235, 0, 1, 0)
+    btn.Size = UDim2.new(0.188, 0, 1, 0)
     btn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
     btn.Text = text
     btn.TextColor3 = Color3.fromRGB(160, 160, 180)
     btn.Font = Enum.Font.GothamSemibold
-    btn.TextSize = 11
+    btn.TextSize = 10
     btn.LayoutOrder = layoutOrder
     btn.Parent = TabBar
     Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
@@ -184,6 +249,7 @@ local Tab1Btn = createTabBtn("Aim", 1)
 local Tab2Btn = createTabBtn("Visuals", 2)
 local Tab3Btn = createTabBtn("Range", 3)
 local Tab4Btn = createTabBtn("Target", 4)
+local Tab5Btn = createTabBtn("Misc", 5)
 
 local Container = Instance.new("Frame")
 Container.Size = UDim2.new(1, -20, 0, 215)
@@ -208,6 +274,7 @@ local AimTab = createTabContainer()
 local VisualsTab = createTabContainer()
 local RangeTab = createTabContainer()
 local TargetTab = createTabContainer()
+local MiscTab = createTabContainer()
 
 AimTab.Visible = true
 Tab1Btn.BackgroundColor3 = Color3.fromRGB(60, 110, 240)
@@ -224,6 +291,7 @@ local function switchTab(selectedBtn, selectedTab)
     VisualsTab.Visible = false
     RangeTab.Visible = false
     TargetTab.Visible = false
+    MiscTab.Visible = false
     
     selectedBtn.BackgroundColor3 = Color3.fromRGB(60, 110, 240)
     selectedBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -234,9 +302,10 @@ Tab1Btn.MouseButton1Click:Connect(function() switchTab(Tab1Btn, AimTab) end)
 Tab2Btn.MouseButton1Click:Connect(function() switchTab(Tab2Btn, VisualsTab) end)
 Tab3Btn.MouseButton1Click:Connect(function() switchTab(Tab3Btn, RangeTab) end)
 Tab4Btn.MouseButton1Click:Connect(function() switchTab(Tab4Btn, TargetTab) end)
+Tab5Btn.MouseButton1Click:Connect(function() switchTab(Tab5Btn, MiscTab) end)
 
 ---------------------------------------------------------
--- ⚙️ MENU CONTROLS & TOGGLES
+-- ⚙️ MENU CONTROLS
 ---------------------------------------------------------
 
 -- 1. Aim Tab
@@ -418,6 +487,27 @@ TorsoBtn.TextSize = 12
 TorsoBtn.Parent = TargetTab
 Instance.new("UICorner", TorsoBtn).CornerRadius = UDim.new(0, 8)
 
+-- 5. Misc Tab
+local TargetInfoToggle = Instance.new("TextButton")
+TargetInfoToggle.Size = UDim2.new(1, 0, 0, 38)
+TargetInfoToggle.BackgroundColor3 = Color3.fromRGB(40, 160, 80)
+TargetInfoToggle.Text = "Target Info Display: ON"
+TargetInfoToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+TargetInfoToggle.Font = Enum.Font.GothamBold
+TargetInfoToggle.TextSize = 12
+TargetInfoToggle.Parent = MiscTab
+Instance.new("UICorner", TargetInfoToggle).CornerRadius = UDim.new(0, 8)
+
+local CrosshairToggle = Instance.new("TextButton")
+CrosshairToggle.Size = UDim2.new(1, 0, 0, 38)
+CrosshairToggle.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
+CrosshairToggle.Text = "Custom Center Crosshair: OFF"
+CrosshairToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+CrosshairToggle.Font = Enum.Font.GothamBold
+CrosshairToggle.TextSize = 12
+CrosshairToggle.Parent = MiscTab
+Instance.new("UICorner", CrosshairToggle).CornerRadius = UDim.new(0, 8)
+
 ---------------------------------------------------------
 -- ⚙️ UI EVENT LOGIC
 ---------------------------------------------------------
@@ -483,6 +573,20 @@ end)
 FovPlus.MouseButton1Click:Connect(function()
     config.fov = math.min(600, config.fov + 10)
     FovLabel.Text = "FOV Circle Size: " .. config.fov
+end)
+
+TargetInfoToggle.MouseButton1Click:Connect(function()
+    config.useTargetInfo = not config.useTargetInfo
+    TargetInfoToggle.Text = config.useTargetInfo and "Target Info Display: ON" or "Target Info Display: OFF"
+    TargetInfoToggle.BackgroundColor3 = config.useTargetInfo and Color3.fromRGB(40, 160, 80) or Color3.fromRGB(180, 50, 50)
+    if not config.useTargetInfo then TargetInfoFrame.Visible = false end
+end)
+
+CrosshairToggle.MouseButton1Click:Connect(function()
+    config.useCrosshair = not config.useCrosshair
+    CrosshairToggle.Text = config.useCrosshair and "Custom Center Crosshair: ON" or "Custom Center Crosshair: OFF"
+    CrosshairToggle.BackgroundColor3 = config.useCrosshair and Color3.fromRGB(40, 160, 80) or Color3.fromRGB(180, 50, 50)
+    crosshairDot.Visible = config.useCrosshair
 end)
 
 local isMinimized = false
@@ -595,6 +699,7 @@ LockBtn.MouseButton1Click:Connect(function()
         LockBtn.Text = "LOCK"
         LockBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
         LockStroke.Color = Color3.fromRGB(60, 120, 255)
+        TargetInfoFrame.Visible = false
         notify("Fahprathan Script", "Unlocked")
     else
         local found = get_closest()
@@ -616,6 +721,12 @@ rs.RenderStepped:Connect(function()
     circle.Position = center
     circle.Radius = config.fov
 
+    -- Center Crosshair Render
+    if config.useCrosshair then
+        crosshairDot.Position = center
+        crosshairDot.Visible = true
+    end
+
     -- FPS & Ping Counter Update
     local fps = math.floor(1 / rs.RenderStepped:Wait())
     local ping = math.floor(stats.Network.ServerStatsItem["Data Ping"]:GetValue())
@@ -627,7 +738,7 @@ rs.RenderStepped:Connect(function()
         circle.Color = Color3.fromHSV(rainbowHue, 0.8, 1)
     end
 
-    -- Camlock Logic
+    -- Camlock & Target Info Logic
     if target and target.Parent and target.Parent:FindFirstChild("Humanoid") and target.Parent.Humanoid.Health > 0 then
         if not config.useRainbowFov then circle.Color = config.target_clr end
         
@@ -638,6 +749,23 @@ rs.RenderStepped:Connect(function()
             local currentCF = cam.CFrame
             local targetCF = CFrame.new(cam.CFrame.Position, lock_pos)
             cam.CFrame = currentCF:Lerp(targetCF, config.smoothness)
+        end
+
+        -- Target Info Display Update
+        if config.useTargetInfo then
+            local targetPlayer = plrs:GetPlayerFromCharacter(target.Parent)
+            local hum = target.Parent:FindFirstChild("Humanoid")
+            local hrp = target.Parent:FindFirstChild("HumanoidRootPart")
+            
+            if hum and hrp then
+                local healthPct = math.clamp(hum.Health / hum.MaxHealth, 0, 1)
+                local dist = math.floor((hrp.Position - cam.CFrame.Position).Magnitude)
+                
+                TargetName.Text = "Target: " .. (targetPlayer and targetPlayer.DisplayName or target.Parent.Name)
+                TargetDistLabel.Text = "HP: " .. math.floor(healthPct * 100) .. "% | Distance: " .. dist .. "m"
+                HealthBarFill.Size = UDim2.new(healthPct, 0, 1, 0)
+                TargetInfoFrame.Visible = true
+            end
         end
 
         -- Target Tracer Line Render
@@ -663,6 +791,7 @@ rs.RenderStepped:Connect(function()
         end
         if not config.useRainbowFov then circle.Color = config.idle_clr end
         targetLine.Visible = false
+        TargetInfoFrame.Visible = false
     end
 
     -- ESP Render Loop
