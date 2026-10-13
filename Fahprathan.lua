@@ -58,7 +58,7 @@ circle.Color = config.idle_clr
 -- 🎨 MAIN GUI CONTAINER & STYLING
 ---------------------------------------------------------
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "FahprathanShopUI"
+ScreenGui.Name = "FahprathanLuxuryUI"
 ScreenGui.ResetOnSpawn = false
 
 if syn and syn.protect_gui then
@@ -153,8 +153,8 @@ TargetDistLabel.Parent = TargetInfoFrame
 ---------------------------------------------------------
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
-MainFrame.Size = UDim2.new(0, 370, 0, 335)
-MainFrame.Position = UDim2.new(0.05, 0, 0.2, 0)
+MainFrame.Size = UDim2.new(0, 365, 0, 315)
+MainFrame.Position = UDim2.new(0.05, 0, 0.22, 0)
 MainFrame.BackgroundColor3 = Color3.fromRGB(12, 14, 20)
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
@@ -168,7 +168,7 @@ local MainStroke = Instance.new("UIStroke", MainFrame)
 MainStroke.Color = Color3.fromRGB(35, 42, 60)
 MainStroke.Thickness = 1.5
 
--- Top Neon Accent
+-- Top Neon Line Accent
 local NeonLine = Instance.new("Frame")
 NeonLine.Size = UDim2.new(1, 0, 0, 2)
 NeonLine.Position = UDim2.new(0, 0, 0, 0)
@@ -266,10 +266,10 @@ local Tab1Btn = createTabBtn("Aim", 1)
 local Tab2Btn = createTabBtn("Visuals", 2)
 local Tab3Btn = createTabBtn("Range", 3)
 local Tab4Btn = createTabBtn("Target", 4)
-local Tab5Btn = createTabBtn("Shop", 5)
+local Tab5Btn = createTabBtn("Misc", 5)
 
 local Container = Instance.new("Frame")
-Container.Size = UDim2.new(1, -20, 0, 240)
+Container.Size = UDim2.new(1, -20, 0, 215)
 Container.Position = UDim2.new(0, 10, 0, 48)
 Container.BackgroundTransparency = 1
 Container.Parent = ContentFrame
@@ -291,7 +291,7 @@ local AimTab = createTabContainer()
 local VisualsTab = createTabContainer()
 local RangeTab = createTabContainer()
 local TargetTab = createTabContainer()
-local ShopTab = createTabContainer()
+local MiscTab = createTabContainer()
 
 AimTab.Visible = true
 Tab1Btn.BackgroundColor3 = Color3.fromRGB(0, 130, 230)
@@ -308,7 +308,7 @@ local function switchTab(selectedBtn, selectedTab)
     VisualsTab.Visible = false
     RangeTab.Visible = false
     TargetTab.Visible = false
-    ShopTab.Visible = false
+    MiscTab.Visible = false
     
     selectedBtn.BackgroundColor3 = Color3.fromRGB(0, 130, 230)
     selectedBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -319,10 +319,10 @@ Tab1Btn.MouseButton1Click:Connect(function() switchTab(Tab1Btn, AimTab) end)
 Tab2Btn.MouseButton1Click:Connect(function() switchTab(Tab2Btn, VisualsTab) end)
 Tab3Btn.MouseButton1Click:Connect(function() switchTab(Tab3Btn, RangeTab) end)
 Tab4Btn.MouseButton1Click:Connect(function() switchTab(Tab4Btn, TargetTab) end)
-Tab5Btn.MouseButton1Click:Connect(function() switchTab(Tab5Btn, ShopTab) end)
+Tab5Btn.MouseButton1Click:Connect(function() switchTab(Tab5Btn, MiscTab) end)
 
 ---------------------------------------------------------
--- ⚙️ MENU CONTROLS
+-- ⚙️ MENU CONTROLS & STYLED BUTTONS
 ---------------------------------------------------------
 
 -- 1. Aim Tab
@@ -504,107 +504,26 @@ TorsoBtn.TextSize = 12
 TorsoBtn.Parent = TargetTab
 Instance.new("UICorner", TorsoBtn).CornerRadius = UDim.new(0, 8)
 
--- 5. Shop Tab (Scrolling Frame for Guns, Armor & Food Selection)
-local ShopScroll = Instance.new("ScrollingFrame")
-ShopScroll.Size = UDim2.new(1, 0, 1, 0)
-ShopScroll.BackgroundTransparency = 1
-ShopScroll.ScrollBarThickness = 3
-ShopScroll.CanvasSize = UDim2.new(0, 0, 0, 360)
-ShopScroll.Parent = ShopTab
+-- 5. Misc Tab
+local TargetInfoToggle = Instance.new("TextButton")
+TargetInfoToggle.Size = UDim2.new(1, 0, 0, 38)
+TargetInfoToggle.BackgroundColor3 = Color3.fromRGB(0, 170, 100)
+TargetInfoToggle.Text = "Target Info Display: ON"
+TargetInfoToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+TargetInfoToggle.Font = Enum.Font.GothamBold
+TargetInfoToggle.TextSize = 12
+TargetInfoToggle.Parent = MiscTab
+Instance.new("UICorner", TargetInfoToggle).CornerRadius = UDim.new(0, 8)
 
-local ShopLayout = Instance.new("UIListLayout", ShopScroll)
-ShopLayout.SortOrder = Enum.SortOrder.LayoutOrder
-ShopLayout.Padding = UDim.new(0, 6)
-
-local function createShopBtn(text, color, parent)
-    local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(1, -6, 0, 32)
-    btn.BackgroundColor3 = color
-    btn.Text = text
-    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    btn.Font = Enum.Font.GothamBold
-    btn.TextSize = 11
-    btn.Parent = parent
-    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
-    return btn
-end
-
--- Armor & Specials
-local BuyArmorBtn = createShopBtn("🛡️ Buy Armor (เกราะ 100%)", Color3.fromRGB(160, 60, 220), ShopScroll)
-
--- Guns Options
-local BuyDBBtn = createShopBtn("🔫 Buy Double-Barrel Shotgun", Color3.fromRGB(0, 130, 230), ShopScroll)
-local BuyTacBtn = createShopBtn("🔫 Buy Tactical Shotgun", Color3.fromRGB(0, 130, 230), ShopScroll)
-local BuyRevBtn = createShopBtn("🔫 Buy Revolver", Color3.fromRGB(0, 130, 230), ShopScroll)
-local BuyRifleBtn = createShopBtn("🔫 Buy Rifle", Color3.fromRGB(0, 130, 230), ShopScroll)
-local BuyGunsBtn = createShopBtn("🛒 Buy All Guns (ซื้อปืนทั้งหมด)", Color3.fromRGB(40, 100, 200), ShopScroll)
-
--- Food Options
-local BuyCranberryBtn = createShopBtn("🥤 Buy Cranberry", Color3.fromRGB(220, 130, 30), ShopScroll)
-local BuyPizzaBtn = createShopBtn("🍕 Buy Pizza", Color3.fromRGB(220, 130, 30), ShopScroll)
-local BuyFoodBtn = createShopBtn("🍔 Buy All Food (ซื้ออาหารทั้งหมด)", Color3.fromRGB(180, 100, 20), ShopScroll)
-
----------------------------------------------------------
--- 🛍️ REMOTE BUY LOGIC
----------------------------------------------------------
-
-local function buyItemRemote(itemName)
-    pcall(function()
-        local shopFolder = workspace:FindFirstChild("Ignored") and workspace.Ignored:FindFirstChild("Shop") or workspace:FindFirstChild("Shop")
-        if shopFolder then
-            for _, shop in ipairs(shopFolder:GetChildren()) do
-                if string.find(string.lower(shop.Name), string.lower(itemName)) then
-                    local clickDetector = shop:FindFirstChildOfClass("ClickDetector") or shop:FindFirstChild("Head") and shop.Head:FindFirstChildOfClass("ClickDetector")
-                    if clickDetector and lp.Character and lp.Character:FindFirstChild("HumanoidRootPart") then
-                        local oldCF = lp.Character.HumanoidRootPart.CFrame
-                        local mainPart = shop:FindFirstChild("Head") or shop:FindFirstChild("Part") or shop:FindFirstChild("MainPart") or shop.PrimaryPart
-                        if mainPart then
-                            lp.Character.HumanoidRootPart.CFrame = mainPart.CFrame * CFrame.new(0, 0, 2)
-                            task.wait(0.05)
-                            fireclickdetector(clickDetector)
-                            task.wait(0.05)
-                            lp.Character.HumanoidRootPart.CFrame = oldCF
-                        end
-                    end
-                end
-            end
-        end
-    end)
-end
-
--- Shop Clicks
-BuyArmorBtn.MouseButton1Click:Connect(function()
-    buyItemRemote("[Armor]")
-    buyItemRemote("[Medium Armor]")
-    buyItemRemote("[High-Medium Armor]")
-    sg:SetCore("SendNotification", { Title = "Fahprathan Script", Text = "Bought Armor!", Duration = 1.5 })
-end)
-
-BuyDBBtn.MouseButton1Click:Connect(function() buyItemRemote("[Double-Barrel Shotgun]") end)
-BuyTacBtn.MouseButton1Click:Connect(function() buyItemRemote("[TacticalShotgun]") end)
-BuyRevBtn.MouseButton1Click:Connect(function() buyItemRemote("[Revolver]") end)
-BuyRifleBtn.MouseButton1Click:Connect(function() buyItemRemote("[Rifle]") end)
-
-BuyGunsBtn.MouseButton1Click:Connect(function()
-    local guns = {"[LMG]", "[Shotgun]", "[TacticalShotgun]", "[Rifle]", "[Revolver]", "[SMG]", "[Glock]", "[Double-Barrel Shotgun]"}
-    for _, gun in ipairs(guns) do
-        buyItemRemote(gun)
-        task.wait(0.08)
-    end
-    sg:SetCore("SendNotification", { Title = "Fahprathan Script", Text = "Bought All Guns!", Duration = 1.5 })
-end)
-
-BuyCranberryBtn.MouseButton1Click:Connect(function() buyItemRemote("[Cranberry]") end)
-BuyPizzaBtn.MouseButton1Click:Connect(function() buyItemRemote("[Pizza]") end)
-
-BuyFoodBtn.MouseButton1Click:Connect(function()
-    local foods = {"[Pizza]", "[Taco]", "[Chicken]", "[Lettuce]", "[Cranberry]"}
-    for _, food in ipairs(foods) do
-        buyItemRemote(food)
-        task.wait(0.08)
-    end
-    sg:SetCore("SendNotification", { Title = "Fahprathan Script", Text = "Bought All Food!", Duration = 1.5 })
-end)
+local CrosshairToggle = Instance.new("TextButton")
+CrosshairToggle.Size = UDim2.new(1, 0, 0, 38)
+CrosshairToggle.BackgroundColor3 = Color3.fromRGB(180, 45, 55)
+CrosshairToggle.Text = "Custom Center Crosshair: OFF"
+CrosshairToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+CrosshairToggle.Font = Enum.Font.GothamBold
+CrosshairToggle.TextSize = 12
+CrosshairToggle.Parent = MiscTab
+Instance.new("UICorner", CrosshairToggle).CornerRadius = UDim.new(0, 8)
 
 ---------------------------------------------------------
 -- ⚙️ UI EVENT LOGIC
@@ -673,16 +592,30 @@ FovPlus.MouseButton1Click:Connect(function()
     FovLabel.Text = "FOV Circle Size: " .. config.fov
 end)
 
+TargetInfoToggle.MouseButton1Click:Connect(function()
+    config.useTargetInfo = not config.useTargetInfo
+    TargetInfoToggle.Text = config.useTargetInfo and "Target Info Display: ON" or "Target Info Display: OFF"
+    TargetInfoToggle.BackgroundColor3 = config.useTargetInfo and Color3.fromRGB(0, 170, 100) or Color3.fromRGB(180, 45, 55)
+    if not config.useTargetInfo then TargetInfoFrame.Visible = false end
+end)
+
+CrosshairToggle.MouseButton1Click:Connect(function()
+    config.useCrosshair = not config.useCrosshair
+    CrosshairToggle.Text = config.useCrosshair and "Custom Center Crosshair: ON" or "Custom Center Crosshair: OFF"
+    CrosshairToggle.BackgroundColor3 = config.useCrosshair and Color3.fromRGB(0, 170, 100) or Color3.fromRGB(180, 45, 55)
+    crosshairDot.Visible = config.useCrosshair
+end)
+
 local isMinimized = false
 MinimizeBtn.MouseButton1Click:Connect(function()
     isMinimized = not isMinimized
     if isMinimized then
         ContentFrame.Visible = false
-        MainFrame.Size = UDim2.new(0, 370, 0, 42)
+        MainFrame.Size = UDim2.new(0, 365, 0, 42)
         MinimizeBtn.Text = "+"
     else
         ContentFrame.Visible = true
-        MainFrame.Size = UDim2.new(0, 370, 0, 335)
+        MainFrame.Size = UDim2.new(0, 365, 0, 315)
         MinimizeBtn.Text = "-"
     end
 end)
